@@ -1,14 +1,13 @@
 import express from "express";
 import cors from "cors";
+import "dotenv/config";
 import { MongoClient, ObjectId } from "mongodb";
 import { jwtVerify, createRemoteJWKSet } from "jose";
 const app = express();
 app.use(cors());
 app.use(express.json());
 const port = "5000";
-const client = new MongoClient(
-  "mongodb://wanderlast:DUsBHlxLPXpSdjDa@ac-pfxvjtr-shard-00-00.cq8rony.mongodb.net:27017,ac-pfxvjtr-shard-00-01.cq8rony.mongodb.net:27017,ac-pfxvjtr-shard-00-02.cq8rony.mongodb.net:27017/?ssl=true&replicaSet=atlas-1jk1m3-shard-0&authSource=admin",
-);
+const client = new MongoClient(process.env.MONGO_AUTH_URL);
 
 export async function connectToMongoDB() {
   try {
@@ -32,7 +31,7 @@ const auth = async (req, res, next) => {
   }
   try {
     const JWKS = createRemoteJWKSet(
-      new URL("http://localhost:3000/api/auth/jwks"),
+      new URL(`${process.env.CLIENT_URL}/api/auth/jwks`),
     );
     const { payload } = await jwtVerify(jwtToken, JWKS);
     next();
