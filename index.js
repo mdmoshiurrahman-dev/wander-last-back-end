@@ -6,7 +6,7 @@ import { jwtVerify, createRemoteJWKSet } from "jose";
 const app = express();
 app.use(cors());
 app.use(express.json());
-const port = "5000";
+const port = process.env.PORT
 const client = new MongoClient(process.env.MONGO_AUTH_URL);
 
 export async function connectToMongoDB() {
@@ -39,7 +39,11 @@ const auth = async (req, res, next) => {
     res.status(401).send({ massage: "server error" });
   }
 };
-
+ 
+app.get('/', (req, res)=>{
+  res.send({status:true})
+})
+ 
 app.get("/destination-data", async (req, res) => {
   const data = await allDestinationData.find().toArray();
   res.send(data);
